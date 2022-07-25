@@ -1,0 +1,59 @@
+
+package CarPrj2;
+
+
+import java.util.ArrayList;
+
+public class Menu<E> {
+    private String menuTitle;
+    private ArrayList<String> optionsList = new ArrayList<>();
+
+    public Menu(String menuTitle) {
+        this.menuTitle = menuTitle;
+    }
+
+    
+    public Menu() {
+    }
+    public void addNewOption(String newOption){
+        optionsList.add(newOption);
+    }
+    
+    public void printMenu(){
+        if(optionsList.isEmpty()){
+            System.out.println("There is no item in the menu");
+            return;
+        }
+        
+        System.out.println("\nWelcome to " + menuTitle);
+        for (String option : optionsList) {
+            System.out.println(option);
+        }
+    }
+    
+    public int getChoice(){
+        int maxOption = optionsList.size();
+        String inputMsg = "Choose [1.." + maxOption + "]: ";
+        String errorMsg = "You are required to choose the option 1.." + maxOption;
+        return TestInput.getAnInteger(inputMsg, errorMsg, 1, maxOption);
+    }
+    public E ref_getChoice(ArrayList<E> options){
+        int response;
+        int n = options.size();
+        do {
+            response = int_getChoice(options);
+        }  while(response < 0 || response > n);
+        return options.get(response - 1);
+        
+    }
+    
+    public int int_getChoice(ArrayList<E> choice){
+        int maxOption = choice.size();
+        String inputMsg = "Choose [1.." + maxOption + "]: ";
+        String errorMsg = "You are required to choose the option 1.." + maxOption;
+        return TestInput.getAnInteger(inputMsg, errorMsg, 1, maxOption);
+    }
+
+    
+
+}
