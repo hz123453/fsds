@@ -1,0 +1,204 @@
+package CarPrj2;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class CarList {
+
+    Car car = new Car();
+    Brand brand = new Brand();
+    ArrayList<Car> carList = new ArrayList<>();
+    BrandList brandList = new BrandList();
+
+    public CarList(BrandList bList) {
+        brandList = bList;
+    }
+
+    public void writeDatabase() {
+        String fileName = "cars.txt";
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+            for (Car x : carList) {
+                bw.write(x.toString());
+                bw.newLine();
+            }
+            
+            bw.close();
+        } catch (IOException e) {
+        }
+    }
+
+    public void readDatabase() {
+        String fileName = "cars.txt";
+        File data = new File(fileName);
+        if (!data.exists()) {
+            System.out.println("File doesn't exist");
+            System.exit(1);
+        }
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = "";
+            while (true) {
+                line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                String[] txt = line.split("[,]");
+                String carID = txt[0].trim();
+                Brand bra = new Brand(txt[1].trim());
+                String color = txt[2].trim();
+                String frameID = txt[3].trim();
+                String engineID = txt[4].trim();
+                carList.add(new Car(carID, bra, color, frameID, engineID));
+            }
+            
+            br.close();
+        } catch (IOException e) {
+        }
+    }
+
+    public int searchID(String cID) {
+        if (carList.isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < carList.size(); i++) {
+            if (carList.get(i).getCarID().equalsIgnoreCase(cID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int searchFrame(String fID) {
+        if (carList.isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < carList.size(); i++) {
+            if (carList.get(i).getFrameID().equalsIgnoreCase(fID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int searchEngine(String eID) {
+        if (carList.isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < carList.size(); i++) {
+            if (carList.get(i).getEngineID().equalsIgnoreCase(eID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void addCar() {
+        Menu menu = new Menu();
+        String carID, color, frameID, engineID;
+        int pos;
+        do {
+            carID = TestInput.getString("Input carID: ", "CarID required! ");
+            pos = searchID(carID);
+            if (pos >= 0) {
+                System.out.println("The carID already exists. " + "Input another one!");
+            }
+        } while (pos != -1);
+        
+        Brand b = (Brand) menu.ref_getChoice(brandList.returnBrandList());
+        color = TestInput.getString("Input color: ", "The color is required!");
+
+        do {
+            frameID = TestInput.getFormat("Input frameID: ", "The format of brandID is X0000","^[A-Z]\\d{5}$");
+            pos = searchFrame(frameID);
+            if (pos >= 0) {
+                System.out.println("The frameID already exists. "+ "Input another one!");
+            }
+        } while (pos != -1);
+        
+        do {
+            engineID = TestInput.getFormat("Input engineID: ", "The format of brandID is X0000","^[A-Z]\\d{5}$");
+            pos = searchEngine(engineID);
+            if (pos >= 0) {
+                System.out.println("The engineID already exists. "+ "Input another one!");
+            }
+        } while (pos != -1);
+        carList.add(new Car(carID, b, color, frameID, engineID));
+        System.out.println("A new car is added sucessfully");
+    }
+
+    public void printBaseBrandName() {
+        int count = 0;
+        String brandID = TestInput.getString("Input brandID: ", "brandID required! ");
+        for (int i = 0; i < carList.size(); i++) {
+            Car c = carList.get(i);
+            if (c.getBrand().getBrandID().equalsIgnoreCase(brandID)) {
+                System.out.println(c.screenString());
+                count++;
+            }
+        }
+        //System.out.println("Update suscess");
+        if (count == 0) {
+            System.out.println("No car is detected!");
+        }
+    }
+
+    public boolean removeCar() {
+        String removeID = TestInput.getString("Input ID: ", "Id is requeried!");
+        int pos = searchID(removeID);
+        if (pos < 0) {
+            System.out.println("Not Found");
+            return false;
+        } else {
+            carList.remove(pos);
+        }
+        return true;
+    }
+
+    public boolean updateCar() {
+        Menu menu = new Menu();
+        String color, frameID, engineID;
+        int test = -1;
+        String updateID = TestInput.getString("Input updateID: ", "UpdateID required!");
+        int pos = searchID(updateID);
+        if (pos < 0) {
+            System.out.println("Not Found");
+            return false;
+        } else {
+            Brand b = (Brand) menu.ref_getChoice(brandList.returnBrandList());
+            color = TestInput.getString("Input color: ", "The color is required!");
+            do {
+                frameID = TestInput.getFormat("Input frameID: ", "The format of brandID is X0000","^[A-Z]\\d{5}$");
+                test = searchFrame(frameID);
+                if (test >= 0) {
+                    System.out.println("The frameID already exists. " + "Input another one!");
+                }
+            } while (test != -1);
+            do {
+                engineID = TestInput.getFormat("Input engineID: ", "The format of brandID is X0000","^[A-Z]\\d{5}$");
+                test = searchEngine(engineID);
+                if (test >= 0) {
+                    System.out.println("The engineID already exists. "+ "Input another one!");
+                }
+            } while (test != -1);
+            
+            carList.get(test).setBrand(b);
+            carList.get(test).setColor(color);
+            carList.get(test).setEngineID(engineID);
+            carList.get(test).setFrameID(frameID);
+        }
+        return true;
+    }
+
+    public void listCar() {
+        for (int i = 0; i < carList.size(); i++) {
+            System.out.println(carList.get(i).toString());
+        }
+    }
+
+}
