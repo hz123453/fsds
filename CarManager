@@ -1,0 +1,78 @@
+
+package CarPrj1;
+
+import CarPrj2.BrandList;
+import CarPrj2.CarList;
+import CarPrj2.Menu;
+
+public class CarManager {
+    public static void main(String[] args) {
+        BrandList obj1 = new BrandList();
+        CarList obj2 = new CarList(obj1);
+        obj1.readDatabase();
+        obj2.readDatabase();
+        int choice;
+        Menu menu = new Menu("Deadline Only Assignment");
+        menu.addNewOption("1. List all brands");
+        menu.addNewOption("2. Add a new brand");
+        menu.addNewOption("3. Search a brand based on it’s ID");
+        menu.addNewOption("4. Update a brand");
+        menu.addNewOption("5. List all cars in ascending order of brand names");
+        menu.addNewOption("6. List cars based on a part of an input brand name");
+        menu.addNewOption("7. Add a car");
+        menu.addNewOption("8. Remove a car based on it ID");
+        menu.addNewOption("9. Update a car based on its ID");
+        menu.addNewOption("10. Quit");
+        
+        do {
+            menu.printMenu();
+            choice = menu.getChoice();
+            switch (choice) {
+                case 1:
+                    System.out.println("You are preparing to " + "print list all brands");
+                    obj1.listBrand();
+                    break;
+                case 2:
+                    System.out.println("You are preparing to " + "add new brand");
+                    obj1.addBrand();
+                    break;
+                case 3:
+                    System.out.println("You are required to input " + "ID to search");
+                    obj1.searchID();
+                    break;
+                case 4:
+                    System.out.println("You are required to input " + "a brand to update");
+                    obj1.updateBrand();
+                    break;
+                case 5:
+                    System.out.println("You are preparing to "+ "print the list all cars in ascending order of brand names");
+                    obj2.listCar();
+                    break;
+                case 6:
+                    System.out.println("You are required to input "+ "brand name");
+                    obj2.printBaseBrandName();
+                    break;
+                case 7:
+                    System.out.println("You are preparing to " + "add new car");
+                    obj2.addCar();
+                    break;
+                case 8:
+                    System.out.println("You are required to input "+ "ID remove a car");
+                    obj2.removeCar();
+                    break;
+                case 9:
+                    System.out.println("You are required to input "+ "ID update a car");
+                    obj2.updateCar();
+                    break;
+                case 10:
+                    System.out.println("Bye!");
+                    break;
+                default: choice = 10;
+            }
+        } while (choice != 10);
+        
+        obj1.writeDatabase();
+        obj2.writeDatabase();
+    }
+}
+
