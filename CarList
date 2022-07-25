@@ -187,10 +187,10 @@ public class CarList {
                 }
             } while (test != -1);
             
-            carList.get(test).setBrand(b);
-            carList.get(test).setColor(color);
-            carList.get(test).setEngineID(engineID);
-            carList.get(test).setFrameID(frameID);
+            carList.get(pos).setBrand(b);
+            carList.get(pos).setColor(color);
+            carList.get(pos).setEngineID(engineID);
+            carList.get(pos).setFrameID(frameID);
         }
         return true;
     }
