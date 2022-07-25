@@ -1,0 +1,127 @@
+
+package CarPrj2;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class BrandList {
+    ArrayList<Brand> listBrand = new ArrayList<>();
+
+    public ArrayList returnBrandList() {
+        return listBrand;
+    }
+    
+    public BrandList() {
+    }
+    
+    public void writeDatabase() {
+        String fileName = "brands.txt";
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+            for (Brand x : listBrand) {
+                bw.write(x.toString());
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+        }
+    }
+
+    public void readDatabase() {
+        String fileName = "brands.txt";
+        File data = new File(fileName);
+        if (!data.exists()) {
+            System.out.println("File doesn't exist");
+            System.exit(1);
+        }
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = "";
+            while (true) {
+                line = br.readLine();
+                if (line == null) break;
+                String[] txt = line.split("[,:]");
+                String brandID = txt[0].trim();
+                String brandName = txt[1].trim();
+                String soundBrand = txt[2].trim();
+                double price = Double.parseDouble(txt[3]);
+                listBrand.add(new Brand(brandID, brandName, soundBrand, price));
+            }
+            
+            br.close();
+        } catch (IOException e) {
+        }
+    }
+    
+    public int searchID(String bID) {
+        if (listBrand.isEmpty()) return -1;
+        for (int i = 0; i < listBrand.size(); i++) 
+            if (listBrand.get(i).getBrandID().equalsIgnoreCase(bID)) return i;
+        return -1;
+    }
+    public void searchID() {
+        String bID = TestInput.getString("Input BrandID: ", "BrandID is required!");
+        int pos = searchID(bID);
+       
+        if (pos < 0) System.out.println("Not found!!!");
+        else {
+            System.out.println(listBrand.get(pos).toString());
+        }
+    }
+    
+    public void addBrand() {
+        String brandID, brandName, soundBrand;
+        double price;
+        int pos;
+        do {
+            brandID = TestInput.getString("Input brandID: ","BrandID required");
+            pos = searchID(brandID);
+            if (pos >= 0) System.out.println("The brandID already exists. "+ "Input another one!");
+        } while (pos != -1);
+        brandName = TestInput.getString("Input brand name: ", "The brand name is required!");
+        soundBrand = TestInput.getString("Input sound brand: ", "The sound brand is required!");
+        do {            
+            price = TestInput.getADouble("Input price: ", "The price is required!");
+        } while (price <= 0);
+        listBrand.add(new Brand(brandID, brandName, soundBrand, price));
+        System.out.println("A new Customer is added sucessfully");
+    }
+    
+    public void updateBrand() {
+        String brandID, brandName, soundBrand;
+        double price;
+        int pos;
+        brandID = TestInput.getString("Input brandID: ","brand id is required!");
+        pos = searchID(brandID);
+        if(pos < 0) System.out.println("Not Found!");
+        else{
+            brandName = TestInput.getString("Input brand name: ", "The brand name is required!");
+            listBrand.get(pos).setBrandName(brandName);
+            soundBrand = TestInput.getString("Input sound brand: ", "The sound brand is required!");
+            listBrand.get(pos).setSoundBrand(soundBrand);
+            do {
+                price = TestInput.getADouble("Input price: ", "The price is required!");
+            } while (price <= 0);
+            listBrand.get(pos).setPrice(price);
+            System.out.println("Update Brand successfully");
+        }
+    }
+    
+    public void listBrand(){
+        for (int i = 0; i < listBrand.size(); i++) {
+            System.out.println(listBrand.get(i).toString());
+        }
+    }   
+    
+    public Brand getUserChoice(){
+        Menu mnu = new Menu();
+        return (Brand)mnu.ref_getChoice(listBrand);
+    }
+    
+}
+
